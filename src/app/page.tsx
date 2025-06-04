@@ -1,18 +1,16 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { auth } from "@/lib/auth";
+import { HomeView } from "@/modules/home/ui/views/home-view";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  const { data: session } = authClient.useSession();
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (session) {
-    return (
-      <div className="flex flex-col gap-y-4">
-        <p>Logged In as {session.user?.name}</p>
-        <Button onClick={() => authClient.signOut()}>SignOut</Button>
-      </div>
-    );
+  if (!session) {
+    redirect("/sign-in");
   }
 
-  return <div className="flex flex-col gap-y-10">Unprotected</div>;
+  return <HomeView />;
 }
