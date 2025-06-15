@@ -9,9 +9,10 @@ import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAgentsFilters } from "../../hooks/use-agents-filters";
+import { DataPagination } from "@/components/data-pagination";
 
 export const AgentView = () => {
-  const [filters] = useAgentsFilters();
+  const [filters, setFilters] = useAgentsFilters();
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
@@ -30,6 +31,11 @@ export const AgentView = () => {
       </ResponsiveDialog>
       <div className="flex-1 pb-4 px-4 md:px-8 flex flex-col gap-y-4">
         <DataTable data={data.items} columns={columns} />
+        <DataPagination
+          page={filters.page}
+          totalPages={data.totalPages}
+          onPageChange={(page) => setFilters({ page })}
+        />
         {data.items.length === 0 && (
           <EmptyState
             title="Create your first agent"
