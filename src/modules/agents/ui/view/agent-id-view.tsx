@@ -7,7 +7,7 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import { AgentIdViewHeader } from "../components/agent-id-view-header";
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,12 +15,14 @@ import { VideoIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useConfirm } from "../../hooks/use-confirm";
+import { UpdateAgentDialog } from "../components/update-agent-dialog";
 
 interface Props {
   agentId: string;
 }
 
 export const AgentIdView = ({ agentId }: Props) => {
+  const [updateAgentDialogOpen, setUpdateAgentDialogOpen] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -60,11 +62,16 @@ export const AgentIdView = ({ agentId }: Props) => {
   return (
     <>
       <RemoveConfirmation />
+      <UpdateAgentDialog
+        open={updateAgentDialogOpen}
+        onOpenChange={setUpdateAgentDialogOpen}
+        initialValues={data}
+      />
       <div className="flex-1 py-4 px-4 md:px-8 flex flex-col gap-y-4">
         <AgentIdViewHeader
           agentId={agentId}
           agentName={data.name}
-          onEdit={() => {}}
+          onEdit={() => setUpdateAgentDialogOpen(true)}
           onRemove={handleRemoveAgent}
         />
         <div className="bg-white rounded-lg border">
